@@ -1,0 +1,43 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+    - name: Add EPEL repository
+      yum_repository:
+        name: epel
+        description: EPEL YUM repo
+        baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+        gpgkey: http://fedora-epel.mirrors.tds.net/fedora-epel//RPM-GPG-KEY-EPEL-7,http://fedora-epel.mirrors.tds.net/fedora-epel//RPM-GPG-KEY-EPEL-7Server
+
+    - name: Add lorax-composer COPR repository
+      yum_repository:
+        name: lorax-composer-copr
+        description: lorax-composer COPR repository
+        baseurl: https://copr-be.cloud.fedoraproject.org/results/@weldr/lorax-composer/epel-7-$basearch/
+        gpgkey: https://copr-be.cloud.fedoraproject.org/results/@weldr/lorax-composer/pubkey.gpg
+
+    - name: Make sure required packages are installed
+      yum: name=cockpit,less,lorax,lorax-composer state=latest
+
+    - name: Install welder-web
+      yum: name=https://bcl.fedorapeople.org/welder-web/welder-web-0-1.fc26.noarch.rpm state=present
+
+    - name: Copy example recipes
+      copy: src={{ item }} dest=/var/lib/lorax/composer/recipes/
+            owner=weldr group=weldr mode=0644
+      with_items:
+            - glusterfs.toml
+            - http-server.toml
+            - kubernetes.toml
+
+    - name: Enable cockpit at boot time
+      systemd: name=cockpit.socket enabled=yes state=started
+
+    - name: Enable lorax-composer at boot time
+      systemd: name=lorax-composer.service enabled=yes state=started
+
+    - name: Expost cockpit to the world
+      firewalld:
+        port: 9090/tcp
+        permanent: true
+        state: enabled
