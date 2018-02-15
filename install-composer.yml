@@ -31,7 +31,7 @@
             - kubernetes.toml
 
     - name: Enable cockpit at boot time
-      systemd: name=cockpit.socket enabled=yes state=started
+      systemd: name=cockpit enabled=yes state=started
 
     - name: Enable lorax-composer at boot time
       systemd: name=lorax-composer.service enabled=yes state=started
