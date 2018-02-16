@@ -22,6 +22,9 @@
     - name: Install welder-web
       yum: name=https://bcl.fedorapeople.org/welder-web/welder-web-0-1.fc26.noarch.rpm state=present
 
+    - name: Setup welder-web to talk to lorax-composer via the socket
+      lineinfile: dest=/usr/share/cockpit/welder/js/config.js regexp="^var welderApiPort" line="var welderApiPort=\"/run/weldr/api.socket\";" state=present
+
     - name: Copy example recipes
       copy: src={{ item }} dest=/var/lib/lorax/composer/recipes/
             owner=weldr group=weldr mode=0644
