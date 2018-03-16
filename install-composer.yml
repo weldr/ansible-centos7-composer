@@ -17,7 +17,7 @@
         gpgkey: https://copr-be.cloud.fedoraproject.org/results/@weldr/lorax-composer/pubkey.gpg
 
     - name: Make sure required packages are installed
-      yum: name=cockpit,less,lorax,lorax-composer state=latest
+      yum: name=cockpit,less,lorax,lorax-composer,composer-cli state=latest
 
     - name: Install welder-web
       yum: name=https://bcl.fedorapeople.org/welder-web/welder-web-0-1.fc26.noarch.rpm state=present
@@ -39,8 +39,9 @@
     - name: Enable lorax-composer at boot time
       systemd: name=lorax-composer.service enabled=yes state=started
 
-    - name: Expost cockpit to the world
+    - name: Expose cockpit to the world
       firewalld:
         port: 9090/tcp
-        permanent: true
+        permanent: yes
+        immediate: yes
         state: enabled
