@@ -16,11 +16,15 @@
         baseurl: https://copr-be.cloud.fedoraproject.org/results/@weldr/lorax-composer/epel-7-$basearch/
         gpgkey: https://copr-be.cloud.fedoraproject.org/results/@weldr/lorax-composer/pubkey.gpg
 
-    - name: Make sure required packages are installed
-      yum: name=cockpit,less,lorax,lorax-composer,composer-cli state=latest
+    - name: Add welder-web COPR repository
+      yum_repository:
+        name: welder-web-copr
+        description: welder-web COPR repository
+        baseurl: https://copr-be.cloud.fedoraproject.org/results/@weldr/welder-web/epel-7-$basearch/
+        gpgkey: https://copr-be.cloud.fedoraproject.org/results/@weldr/welder-web/pubkey.gpg
 
-    - name: Install welder-web
-      yum: name=https://bcl.fedorapeople.org/welder-web/welder-web-0-1.fc26.noarch.rpm state=present
+    - name: Make sure required packages are installed
+      yum: name=cockpit,less,lorax,lorax-composer,composer-cli,welder-web state=latest
 
     - name: Setup welder-web to talk to lorax-composer via the socket
       lineinfile: dest=/usr/share/cockpit/welder/js/config.js regexp="^var welderApiPort" line="var welderApiPort=\"/run/weldr/api.socket\";" state=present
@@ -29,9 +33,9 @@
       copy: src={{ item }} dest=/var/lib/lorax/composer/recipes/
             owner=weldr group=weldr mode=0644
       with_items:
-            - glusterfs.toml
-            - http-server.toml
-            - kubernetes.toml
+        - glusterfs.toml
+        - http-server.toml
+        - kubernetes.toml
 
     - name: Enable cockpit at boot time
       systemd: name=cockpit enabled=yes state=started
@@ -42,6 +46,6 @@
     - name: Expose cockpit to the world
       firewalld:
         port: 9090/tcp
-        permanent: yes
-        immediate: yes
+        permanent: true
+        immediate: true
         state: enabled
