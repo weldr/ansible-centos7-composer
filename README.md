@@ -17,11 +17,16 @@ to ssh-add the key to your local ssh-agent first.
 
 This will install cockpit, welder-web, and lorax-composer. Cockpit should be
 available on port 9090 of the system. Note that the current version of
-welder-web is not compatible with lorax-composer-19.7.7 and later.
+welder-web (0.0.1-1) does not support composing an image (the UI for that is a mockup).
 
 After ansible is finished you can experiment with lorax-composer directly from
 the VM's cmdline. ssh to the system, or use the console provided by
 cockpit.
+
+welder-web is available at https://<ip-of-the-vm>:9090 and can be used to view
+and edit recipes. You will need to accept the self-signed SSL certificate in
+your browser and login as root with the password you set while installing the
+VM.
 
 List Recipes
 ------------
